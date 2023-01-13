@@ -3,6 +3,7 @@ import { BehaviorSubject, EMPTY, Subject, catchError, combineLatest, filter, map
 
 import { ProductService } from './product.service';
 import { ProductCategoryService } from '../product-categories/product-category.service';
+import { SupplierService } from '../suppliers/supplier.service';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -12,7 +13,8 @@ import { ProductCategoryService } from '../product-categories/product-category.s
 export class ProductListComponent {
   constructor(
     private productService: ProductService,
-    private productCategoryService: ProductCategoryService) { }
+    private productCategoryService: ProductCategoryService,
+    private supplierService: SupplierService) { }
 
   pageTitle = 'Product List';
   errorMessage = '';
@@ -37,6 +39,9 @@ export class ProductListComponent {
 
   onAdd(): void {
     this.productService.addProduct(undefined);
+    this.supplierService.supplierWithConcatMap$.subscribe(supplier => {
+      console.log('Supplier: ', supplier);
+    });
   }
 
   onSelected(categoryId: string): void {
