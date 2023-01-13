@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, } from '@angular/core';
 
-import { Subscription, catchError, of } from 'rxjs';
+import { BehaviorSubject, Subject, catchError, of } from 'rxjs';
 
-import { Product } from '../product';
 import { ProductService } from '../product.service';
 
 @Component({
@@ -11,17 +10,20 @@ import { ProductService } from '../product.service';
 })
 export class ProductListAltComponent {
   pageTitle = 'Products';
-  errorMessage = '';
-  selectedProductId = 0;
+  selectedProduct$ = this.productService.selectedProduct$;
 
-  products$ = this.productService.products$.pipe(catchError(err => {
-    this.errorMessage = err;
-    return of([]);
-  }));
+  private errorMessageSubject = new Subject<string>();
+  errorMessageAction$ = this.errorMessageSubject.asObservable();
+
+  products$ = this.productService.productsWithAdd$
+    .pipe(catchError(err => {
+      this.errorMessageSubject.next(err);
+      return of([]);
+    }));
 
   constructor(private productService: ProductService) { }
 
   onSelected(productId: number): void {
-    console.log('Not yet implemented');
+    this.productService.selectedProductChanged(productId);
   }
 }
