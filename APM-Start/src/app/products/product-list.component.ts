@@ -39,9 +39,6 @@ export class ProductListComponent {
 
   onAdd(): void {
     this.productService.addProduct(undefined);
-    this.supplierService.supplierWithConcatMap$.subscribe(supplier => {
-      console.log('Supplier: ', supplier);
-    });
   }
 
   onSelected(categoryId: string): void {

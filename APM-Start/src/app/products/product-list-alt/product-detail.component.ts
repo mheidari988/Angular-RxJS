@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Supplier } from 'src/app/suppliers/supplier';
-import { Product } from '../product';
 
 import { ProductService } from '../product.service';
-import { EMPTY, catchError, of } from 'rxjs';
+import { EMPTY, catchError, combineLatest, filter, map } from 'rxjs';
 
 @Component({
   selector: 'pm-product-detail',
@@ -11,9 +9,9 @@ import { EMPTY, catchError, of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductDetailComponent {
-  pageTitle = 'Product Detail';
   errorMessage = '';
-  productSuppliers: Supplier[] | null = null;
+
+  constructor(private productService: ProductService) { }
 
   product$ = this.productService.selectedProduct$
     .pipe(
@@ -21,8 +19,28 @@ export class ProductDetailComponent {
         this.errorMessage = err;
         return EMPTY;
       })
-    )
+    );
 
-  constructor(private productService: ProductService) { }
+  pageTitle$ = this.product$
+    .pipe(
+      map(product => product ? `Product Detail: ${product.productName}` : null)
+    );
 
+  productSuppliers$ = this.productService.selectedProductSupplier$
+    .pipe(
+      catchError(err => {
+        this.errorMessage = err;
+        return EMPTY;
+      })
+    );
+
+  viewModel$ = combineLatest([
+    this.product$,
+    this.pageTitle$,
+    this.productSuppliers$
+  ]).pipe(
+    filter(([inputs]) => Boolean(inputs)),
+    map(([product, pageTitle, productSuppliers]) =>
+      ({ product, pageTitle, productSuppliers }))
+  )
 }

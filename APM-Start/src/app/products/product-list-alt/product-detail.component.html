@@ -1,39 +1,41 @@
 <div class="card"
-     *ngIf="product$ | async as product">
+     *ngIf="viewModel$ | async as viewModel">
   <div class="card-header">
-    {{ pageTitle }}
+    {{ viewModel.pageTitle }}
   </div>
 
-  <div class="card-body">
+  <div class="card-body" *ngIf="viewModel.product">
     <div class="row">
       <div class="col-md-2">Name:</div>
-      <div class="col-md-6">{{ product.productName }}</div>
+      <div class="col-md-6">{{ viewModel.product.productName }}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Code:</div>
-      <div class="col-md-6">{{ product.productCode }}</div>
+      <div class="col-md-6">{{ viewModel.product.productCode }}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Category:</div>
-      <div class="col-md-6">{{ product.categoryId }}</div>
+      <div class="col-md-6">{{ viewModel.product.categoryId }}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Description:</div>
-      <div class="col-md-6">{{ product.description }}</div>
+      <div class="col-md-6">{{ viewModel.product.description }}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Price:</div>
-      <div class="col-md-6">{{ product.price | currency: "USD":"symbol" }}</div>
+      <div class="col-md-6">{{ viewModel.product.price | currency: "USD":"symbol" }}</div>
     </div>
     <div class="row">
       <div class="col-md-2">In Stock:</div>
-      <div class="col-md-6">{{ product.quantityInStock }}</div>
+      <div class="col-md-6">{{ viewModel.product.quantityInStock }}</div>
     </div>
 
     <div class="table-responsive"
-         *ngIf="productSuppliers">
-      <table class="table mb-0"
-             *ngIf="productSuppliers.length; else noSuppliers">
+         *ngIf="viewModel.productSuppliers">
+      <table class="
+         table
+         mb-0"
+             *ngIf="viewModel.productSuppliers.length; else noSuppliers">
         <thead>
           <tr>
             <th>Supplier</th>
@@ -42,7 +44,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let supplier of productSuppliers">
+          <tr *ngFor="let supplier of viewModel.productSuppliers">
             <td>{{ supplier.name }}</td>
             <td>{{ supplier.cost | currency: "USD":"symbol":"1.2-2" }}</td>
             <td>{{ supplier.minQuantity }}</td>
